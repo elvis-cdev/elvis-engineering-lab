@@ -26,4 +26,10 @@ Record completed work, tests, limitations, and the next useful task in `engineer
 
 ## Project stack
 
-The stack is intentionally not preselected. Choose a language and framework before scaffolding executable services so that the setup fits the intended learning goals.
+- Node.js 22 and TypeScript
+- Express 5 for HTTP APIs
+- Vitest and Supertest for automated tests
+- PostgreSQL for persistence as database exercises are added
+- GitHub Actions for type checks, tests, and build verification
+
+The initial API includes a health endpoint, consistent JSON 404 responses, and malformed-JSON handling. PostgreSQL integration and migrations will be added in focused steps with tests.
