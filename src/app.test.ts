@@ -35,6 +35,12 @@ describe("invalid JSON", () => {
       .set("Content-Type", "application/json")
       .send("{bad json");
 
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(400);
+    expect(response.body).toEqual({
+      error: {
+        code: "INVALID_JSON",
+        message: "Request body must contain valid JSON.",
+      },
+    });
   });
 });
