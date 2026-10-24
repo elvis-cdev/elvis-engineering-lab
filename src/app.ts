@@ -23,6 +23,21 @@ app.use((_req, res) => {
 
 const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (res.headersSent) return;
+
+  if (
+    err instanceof Error &&
+    "type" in err &&
+    err.type === "entity.too.large"
+  ) {
+    res.status(413).json({
+      error: {
+        code: "PAYLOAD_TOO_LARGE",
+        message: "Request body must not exceed 100kb.",
+      },
+    });
+    return;
+  }
+
   if (err instanceof SyntaxError && "body" in err) {
     res.status(400).json({
       error: {
