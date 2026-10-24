@@ -44,3 +44,20 @@ describe("invalid JSON", () => {
     });
   });
 });
+
+describe("oversized JSON", () => {
+  it("returns 413 when the request body exceeds the configured limit", async () => {
+    const response = await request(app)
+      .post("/health")
+      .set("Content-Type", "application/json")
+      .send({ payload: "x".repeat(101 * 1024) });
+
+    expect(response.status).toBe(413);
+    expect(response.body).toEqual({
+      error: {
+        code: "PAYLOAD_TOO_LARGE",
+        message: "Request body must not exceed 100kb.",
+      },
+    });
+  });
+});
