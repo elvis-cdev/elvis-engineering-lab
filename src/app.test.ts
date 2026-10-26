@@ -1,6 +1,6 @@
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import { app } from "./app.js";
+import { app, createApp } from "./app.js";
 
 describe("GET /health", () => {
   it("returns a successful health response", async () => {
@@ -11,6 +11,37 @@ describe("GET /health", () => {
       status: "ok",
       service: "elvis-engineering-lab",
     });
+  });
+});
+
+describe("GET /ready", () => {
+  it("returns ready when the database check succeeds", async () => {
+    const readyApp = createApp({ checkDatabase: async () => undefined });
+    const response = await request(readyApp).get("/ready");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      status: "ready",
+      service: "elvis-engineering-lab",
+    });
+  });
+
+  it("returns 503 without exposing database errors when the check fails", async () => {
+    const readyApp = createApp({
+      checkDatabase: async () => {
+        throw new Error("simulated database outage");
+      },
+    });
+    const response = await request(readyApp).get("/ready");
+
+    expect(response.status).toBe(503);
+    expect(response.body).toEqual({
+      error: {
+        code: "SERVICE_UNAVAILABLE",
+        message: "Service dependencies are not ready.",
+      },
+    });
+    expect(JSON.stringify(response.body)).not.toContain("simulated database outage");
   });
 });
 
