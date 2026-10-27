@@ -1,6 +1,8 @@
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import { app, createApp } from "./app.js";
+import { app, closeReadinessPool, createApp } from "./app.js";
+
+const integrationDatabaseUrl = process.env.TEST_DATABASE_URL;
 
 describe("GET /health", () => {
   it("returns a successful health response", async () => {
@@ -42,6 +44,32 @@ describe("GET /ready", () => {
       },
     });
     expect(JSON.stringify(response.body)).not.toContain("simulated database outage");
+  });
+});
+
+describe.skipIf(!integrationDatabaseUrl)("GET /ready with PostgreSQL", () => {
+  it("executes the real readiness query against the configured test database", async () => {
+    await closeReadinessPool();
+    const previousDatabaseUrl = process.env.DATABASE_URL;
+    process.env.DATABASE_URL = integrationDatabaseUrl!;
+
+    try {
+      const response = await request(createApp()).get("/ready");
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        status: "ready",
+        service: "elvis-engineering-lab",
+      });
+    } finally {
+      await closeReadinessPool();
+
+      if (previousDatabaseUrl === undefined) {
+        delete process.env.DATABASE_URL;
+      } else {
+        process.env.DATABASE_URL = previousDatabaseUrl;
+      }
+    }
   });
 });
 
