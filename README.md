@@ -20,10 +20,21 @@ A practical engineering lab for building backend engineering skills through smal
 6. Keep `main` stable. Use a focused branch and pull request when a change is risky or CI has not yet verified it.
 7. Make commits concise and specific, using conventional prefixes when useful (`feat:`, `fix:`, `test:`, `docs:`, `refactor:`, `chore:`).
 
+## API endpoints
+
+- `GET /health` is a liveness check. It confirms that the HTTP process is responding and does not depend on PostgreSQL.
+- `GET /ready` is a readiness check. It runs `SELECT 1` against PostgreSQL and returns `503 Service Unavailable` if `DATABASE_URL` is missing or the database check fails. Failure responses do not expose database error details.
+
 ## Daily engineering log
 
 Record completed work, tests, limitations, and the next useful task in `engineering-log/`. A quiet day is better than a low-quality change.
 
 ## Project stack
 
-The stack is intentionally not preselected. Choose a language and framework before scaffolding executable services so that the setup fits the intended learning goals.
+- Node.js 22 and TypeScript
+- Express 5 for HTTP APIs
+- Vitest and Supertest for automated tests
+- PostgreSQL for persistence as database exercises are added
+- GitHub Actions for type checks, tests, and build verification
+
+The initial API includes a health endpoint, a database readiness endpoint, consistent JSON 404 responses, malformed-JSON handling, and a request-body size limit. PostgreSQL integration and migrations will be added in focused steps with tests.
