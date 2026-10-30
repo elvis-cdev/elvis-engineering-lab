@@ -71,6 +71,20 @@ export function createApp(options: AppOptions = {}) {
     if (
       err instanceof Error &&
       "type" in err &&
+      err.type === "encoding.unsupported"
+    ) {
+      res.status(415).json({
+        error: {
+          code: "UNSUPPORTED_CONTENT_ENCODING",
+          message: "Request content encoding is not supported.",
+        },
+      });
+      return;
+    }
+
+    if (
+      err instanceof Error &&
+      "type" in err &&
       err.type === "entity.too.large"
     ) {
       res.status(413).json({
