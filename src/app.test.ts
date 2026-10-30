@@ -104,6 +104,24 @@ describe("invalid JSON", () => {
   });
 });
 
+describe("unsupported content encoding", () => {
+  it("returns 415 when the request uses an unsupported content encoding", async () => {
+    const response = await request(app)
+      .post("/health")
+      .set("Content-Type", "application/json")
+      .set("Content-Encoding", "compress")
+      .send('{"payload":"test"}');
+
+    expect(response.status).toBe(415);
+    expect(response.body).toEqual({
+      error: {
+        code: "UNSUPPORTED_CONTENT_ENCODING",
+        message: "Request content encoding is not supported.",
+      },
+    });
+  });
+});
+
 describe("oversized JSON", () => {
   it("returns 413 when the request body exceeds the configured limit", async () => {
     const response = await request(app)
