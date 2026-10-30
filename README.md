@@ -24,6 +24,8 @@ A practical engineering lab for building backend engineering skills through smal
 
 - `GET /health` is a liveness check. It confirms that the HTTP process is responding and does not depend on PostgreSQL.
 - `GET /ready` is a readiness check. It runs `SELECT 1` against PostgreSQL and returns `503 Service Unavailable` if `DATABASE_URL` is missing or the database check fails. Failure responses do not expose database error details.
+- Malformed JSON returns `400 Bad Request`, oversized JSON returns `413 Payload Too Large`, and unsupported request content encodings return `415 Unsupported Media Type`.
+- Unknown routes return a consistent JSON `404 Not Found` response.
 
 ## Daily engineering log
 
@@ -37,4 +39,4 @@ Record completed work, tests, limitations, and the next useful task in `engineer
 - PostgreSQL for persistence as database exercises are added
 - GitHub Actions for type checks, tests, and build verification
 
-The initial API includes a health endpoint, a database readiness endpoint, consistent JSON 404 responses, malformed-JSON handling, and a request-body size limit. PostgreSQL integration and migrations will be added in focused steps with tests.
+The initial API includes a health endpoint, a database readiness endpoint, consistent JSON 404 responses, malformed-JSON handling, unsupported content-encoding handling, and a request-body size limit. PostgreSQL integration and migrations will be added in focused steps with tests.
