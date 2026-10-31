@@ -12,10 +12,18 @@ export function createDatabasePool(
     throw new Error("DATABASE_URL must be configured before creating a database pool.");
   }
 
-  return new Pool({
+  const pool = new Pool({
     connectionString,
     max: 10,
     idleTimeoutMillis: 30_000,
     connectionTimeoutMillis: 5_000,
   });
+
+  // pg emits "error" for failures on idle clients. Without a listener,
+  // EventEmitter treats that as an uncaught error and can terminate the process.
+  pool.on("error", (error: Error) => {
+    console.error("Unexpected error on an idle PostgreSQL client:", error.message);
+  });
+
+  return pool;
 }
