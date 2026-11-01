@@ -22,7 +22,7 @@ A practical engineering lab for building backend engineering skills through smal
 
 ## API endpoints
 
-- `GET /health` is a liveness check. It confirms that the HTTP process is responding and does not depend on PostgreSQL.
+- `GET /health` is a liveness check. It confirms that the HTTP process is responding and does not depend on PostgreSQL or JSON request-body parsing.
 - `GET /ready` is a readiness check. It runs `SELECT 1` against PostgreSQL and returns `503 Service Unavailable` if `DATABASE_URL` is missing or the database check fails. Failure responses do not expose database error details.
 
 ## Daily engineering log

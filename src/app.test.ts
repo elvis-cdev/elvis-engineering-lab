@@ -14,6 +14,19 @@ describe("GET /health", () => {
       service: "elvis-engineering-lab",
     });
   });
+
+  it("remains available when the request body contains malformed JSON", async () => {
+    const response = await request(app)
+      .get("/health")
+      .set("Content-Type", "application/json")
+      .send("{bad json");
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      status: "ok",
+      service: "elvis-engineering-lab",
+    });
+  });
 });
 
 describe("GET /ready", () => {

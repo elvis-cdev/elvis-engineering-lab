@@ -30,8 +30,8 @@ export function createApp(options: AppOptions = {}) {
   const checkDatabase = options.checkDatabase ?? checkDatabaseConnection;
 
   app.disable("x-powered-by");
-  app.use(express.json({ limit: "100kb" }));
 
+  // Health routes must not depend on parsing an optional request body.
   app.get("/health", (_req, res) => {
     res.status(200).json({
       status: "ok",
@@ -55,6 +55,8 @@ export function createApp(options: AppOptions = {}) {
       });
     }
   });
+
+  app.use(express.json({ limit: "100kb" }));
 
   app.use((_req, res) => {
     res.status(404).json({
